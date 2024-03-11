@@ -34,7 +34,7 @@ const startApp = () => {
     const mouse = new THREE.Vector2();
     
     //container.addEventListener('click', onClick);
-    //container.addEventListener('mousemove', onHover)
+    container.addEventListener('mousemove', onHover)
     
     
 
@@ -183,24 +183,28 @@ const startApp = () => {
 
     
 
-    // function onHover(event) {
-    //     // Calculate mouse position in normalized device coordinates
-    //     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    //     mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    function onHover(event) {
+        // Calculate mouse position in normalized device coordinates
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
-    //     // Raycast from camera to intersect objects
-    //     raycaster.setFromCamera(mouse, camera);
-    //     const intersects = raycaster.intersectObject(sphere);
+        // Raycast from camera to intersect objects
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(sphere);
 
-    //     // If there's an intersection with the sphere, change cursor
+        sphere.position.x = mouse.x ;
+        sphere.position.y = mouse.y ;
 
-    //     if (intersects.length > 0){
-    //         container.classList.add('hover-pointer');
-    //     }else {
-    //         container.classList.remove('hover-pointer');
-    //     }
+        // If there's an intersection with the sphere, change cursor
+
+        if (intersects.length > 0){
+            //container.classList.add('hover-pointer');
+            
+        }else {
+            //container.classList.remove('hover-pointer');
+        }
         
-    // }
+    }
 
 
 
