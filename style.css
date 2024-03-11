@@ -17,6 +17,16 @@ html,body, main{
     height: 100%;
 }
 
+#sfera{
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+}
+
+
+
 h1{
     font-size: 4rem;
     font-family: 'activica';
@@ -33,6 +43,10 @@ section{
 
 .container{
     padding: 5rem;
+}
+
+#hero{
+    padding: 0rem;
 }
 
 .sticky_parent{
