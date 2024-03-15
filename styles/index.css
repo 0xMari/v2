@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: 'activica' ;
-    src: url(./assets/FT-Activica-Pixel.otf) format('opentype');
+    src: url(../assets/fonts/FT-Activica-Pixel.otf) format('opentype');
 }
 
 *{

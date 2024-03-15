@@ -22,6 +22,7 @@ const startApp = () => {
     const camera = useCamera();
     camera.position.z = 6;
     const renderer = useRenderer();
+    
 
     const { width, height } = useRenderSize()
 
@@ -78,7 +79,7 @@ const startApp = () => {
 
     const test = new THREE.PlaneGeometry(visWidth, visHeight);
     const testMat = new THREE.MeshBasicMaterial({color: 0xff00ff});
-    const texture = new THREE.TextureLoader().load('Vector.png' ); 
+    const texture = new THREE.TextureLoader().load('../assets/imgs/Vector.png' ); 
     texture.colorSpace = THREE.SRGBColorSpace;
 
 
