@@ -9,11 +9,11 @@ let images = [
 ] ;
 
 let iimg = [
-    'assets/imgs/img.png',
-    'assets/imgs/img.png',
-    'assets/imgs/img.png',
-    'assets/imgs/img.png',
-    'assets/imgs/img.png',
+    'img.png',
+    'img.png',
+    'img.png',
+    'img.png',
+    'img.png',
 ]
 
 iimg.forEach(img => {
