@@ -8,7 +8,15 @@ let images = [
     'https://images.unsplash.com/photo-1616651181742-3992e339e2a4?q=80&w=2550&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 ] ;
 
-images.forEach(img => {
+let iimg = [
+    'assets/imgs/img.png',
+    'assets/imgs/img.png',
+    'assets/imgs/img.png',
+    'assets/imgs/img.png',
+    'assets/imgs/img.png',
+]
+
+iimg.forEach(img => {
     stickySections.forEach(section => {
         let image = document.createElement('img');
         image.src= img;
