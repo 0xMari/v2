@@ -16,7 +16,7 @@ let iimg = [
     'img.png',
 ]
 
-iimg.forEach(img => {
+images.forEach(img => {
     stickySections.forEach(section => {
         let image = document.createElement('img');
         image.src= img;
