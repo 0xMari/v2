@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { MarchingCubes } from 'three/examples/jsm/objects/MarchingCubes.js';
 
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -15,7 +16,24 @@ import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.jso
 
 const startApp = () => {
 
-    console.log('3d');
+    const params = {
+            
+        transmission: 1,
+        opacity: 1,
+        metalness: 0,
+        roughness: 0,
+        ior: 0.00001,
+        thickness: 0.5,
+        specularIntensity: 1,
+        specularColor: 0xffffff,
+        lightIntensity: 1,
+        exposure: 1
+    };
+
+    let time = 0;
+    const numBlobs = 15;
+    const numSphere = 1;
+    const clock = new THREE.Clock();
 
     const scene = useScene();
     const container = document.getElementById('sfera');
@@ -27,9 +45,10 @@ const startApp = () => {
     const { width, height } = useRenderSize()
 
     const sphere = createSphere();
-
     sphere.position.set(0,0,2.2);
-    
+
+    const balls = createMetaBalls(7);
+    balls.position.set(0,0,2.2);
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -38,34 +57,7 @@ const startApp = () => {
     //container.addEventListener('click', onClick);
     container.addEventListener('mousemove', onHover)
     
-    
-
-    const loader = new FontLoader();
-    const font = loader.parse(HelvetikerFont);
-    const textGeometry = new TextGeometry( 'HELLO WORLD BLABLA', {
-        font: font,
-        size: 0.5,
-        height: 0.01,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 0.03,
-        bevelSize: 0.02,
-        bevelOffset: 0,
-        bevelSegments: 5,
-    } );
-
-    const mat = new THREE.MeshBasicMaterial({
-        color: 0x000000,
-    });
-
-    textGeometry.computeBoundingBox();
-
-
-    const textMesh = new THREE.Mesh(textGeometry, mat);
-    
-    if (textGeometry.boundingBox) {
-        textGeometry.translate(-textGeometry.boundingBox.max.x / 2, 0, 0);
-    }
+    // TEXTURE ON PLANE
     
     // Convert the field of view to radians 
     const vFOV = THREE.MathUtils.degToRad( camera.fov );
@@ -92,46 +84,25 @@ const startApp = () => {
 
     testPlane.position.z = -5;
 
+    // END TEXTURE ON PLANE
     
-    
-    // const controls = new OrbitControls(camera, renderer.domElement);
-    // controls.enabled = true;
 
 
     function setupLights(){
         // Add light
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
         scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xfff, 0.5);
-        scene.add(directionalLight);
     };
 
 
     function animate() {
         requestAnimationFrame(() => animate());
-        //sphere rotation
-        // const time = Date.now() * 0.0007;
-        // sphere.rotation.y = time;
-        // sphere.rotation.z = 0.5* ( 1 +  Math.sin( time ) );
+        const delta = clock.getDelta();
 
+		time += delta * 0.3;
+        updateCubes( balls, time, numBlobs);
 
                 
-    };
-
-
-    function setupTexture(){
-        const textureLoader = new THREE.TextureLoader();
-        let textureEquirec;
-        textureEquirec = textureLoader.load( '../imgs/holo2.jpg' );
-        textureEquirec.mapping = THREE.EquirectangularReflectionMapping;
-        textureEquirec.colorSpace = THREE.SRGBColorSpace;
-        
-        
-        const hdr = new RGBELoader().load( '../imgs/sepulchral_chapel_rotunda_2k.hdr' , function(){
-            hdr.mapping = THREE.EquirectangularReflectionMapping;
-        });
-
-        return textureEquirec;
     };
 
 
@@ -141,31 +112,11 @@ const startApp = () => {
 
         const sphereGeometry = new THREE.IcosahedronGeometry(0.5, 15);
         
-        const params = {
-            
-            transmission: 1,
-            opacity: 1,
-            metalness: 0,
-            roughness: 0,
-            ior: 0.00001,
-            thickness: 0.5,
-            specularIntensity: 1,
-            specularColor: 0xffffff,
-            lightIntensity: 1,
-            exposure: 1
-        };
         
         const material = new THREE.MeshPhysicalMaterial( {
-            // color: params.color,
-            // metalness: params.metalness,
             roughness: params.roughness,
-            //ior: params.ior,
             transmission: params.transmission,
             thickness: params.thickness,
-            // specularIntensity: params.specularIntensity,
-            // specularColor: params.specularColor,
-            // opacity: params.opacity,
-            // side: THREE.DoubleSide,
             clearcoat: 0.5,
         } );
 
@@ -176,12 +127,58 @@ const startApp = () => {
 
     };
 
+    function createMetaBalls(scale){
+        const resolution = 35;
+
+        const material = new THREE.MeshPhysicalMaterial( {
+            roughness: params.roughness,
+            transmission: params.transmission,
+            thickness: params.thickness,
+            clearcoat: 0.5,
+        } );
+
+
+		const effect = new MarchingCubes( resolution, material, true, true, 100000 );
+        effect.scale.set( scale, scale, scale );
+
+        effect.enableUvs = false;
+        effect.enableColors = false;
+
+        return effect;
+    };
+
+    function updateCubes( object, time, numblobs) {
+
+        object.reset();
+
+        // fill the field with some metaballs
+
+        const subtract = 12;
+        const strength = 1.2 / ( ( Math.sqrt( numblobs ) - 1 ) / 4 + 1 );
+
+        for ( let i = 0; i < numblobs; i ++ ) {
+
+            const ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.27 + 0.5;
+            //const ballz = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) ) ) * 0.77; // dip into the floor
+            const bally = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.27 + 0.5;
+            const ballz= 0;
+            
+
+            object.addBall( ballx, bally, ballz, strength, subtract );
+
+        }
+
+        object.update();
+
+    }
+
+    
     
 
-    useTick(({ timestamp, timeDiff }) => {
-        const time = timestamp / 5000
-        //sphere.material.userData.shader.uniforms.uTime.value = time
-    })
+    // useTick(({ timestamp, timeDiff }) => {
+    //     const time = timestamp / 5000
+    //     //sphere.material.userData.shader.uniforms.uTime.value = time
+    // })
 
     
 
@@ -216,12 +213,9 @@ const startApp = () => {
         setupLights();
 
         scene.add(testPlane);
-        scene.add(sphere);
-        //scene.add(textMesh);
+        scene.add(balls);
 
 
-        console.log(scene);
-        //scene.add(water);
 
         animate();
         
