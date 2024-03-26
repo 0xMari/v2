@@ -44,7 +44,7 @@ const startApp = () => {
 
     const { width, height } = useRenderSize()
 
-    const sphere = createSphere();
+    const sphere = createMetaBalls(5);
     sphere.position.set(0,0,2.2);
 
     const balls = createMetaBalls(7);
@@ -52,7 +52,6 @@ const startApp = () => {
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    const v2 = new THREE.Vector2();
     
     //container.addEventListener('click', onClick);
     container.addEventListener('mousemove', onHover)
@@ -101,17 +100,16 @@ const startApp = () => {
 
 		time += delta * 0.3;
         updateCubes( balls, time, numBlobs);
+        updateSphere(sphere, numSphere);
 
+        
                 
     };
 
 
 
     function createSphere(){
-
-
         const sphereGeometry = new THREE.IcosahedronGeometry(0.5, 15);
-        
         
         const material = new THREE.MeshPhysicalMaterial( {
             roughness: params.roughness,
@@ -120,7 +118,6 @@ const startApp = () => {
             clearcoat: 0.5,
         } );
 
-
         const sphere = new THREE.Mesh(sphereGeometry, material);
 
         return sphere;
@@ -128,7 +125,7 @@ const startApp = () => {
     };
 
     function createMetaBalls(scale){
-        const resolution = 35;
+        const resolution = 40;
 
         const material = new THREE.MeshPhysicalMaterial( {
             roughness: params.roughness,
@@ -172,7 +169,31 @@ const startApp = () => {
 
     }
 
-    
+    function updateSphere( object, numblobs) {
+
+        object.reset();
+
+        // fill the field with some metaballs
+
+        const subtract = 12;
+        const strength = 1.2 / ( ( Math.sqrt( numblobs ) - 1 ) / 4 + 1 );
+
+        for ( let i = 0; i < numblobs; i ++ ) {
+
+            // const ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.27 + 0.5;
+            //const ballz = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) ) ) * 0.77; // dip into the floor
+            //const bally = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.27 + 0.5;
+            const ballz= 0;
+            const ballx = 0.5;
+            const bally = 0.5;
+
+            object.addBall(ballx, bally, ballz, strength, subtract);
+
+        }
+
+        object.update();
+
+    }
     
 
     // useTick(({ timestamp, timeDiff }) => {
@@ -180,31 +201,49 @@ const startApp = () => {
     //     //sphere.material.userData.shader.uniforms.uTime.value = time
     // })
 
-    
+    var pIntersect = new THREE.Vector3(); // point of intersection with an object (plane's point)
+    var plane = new THREE.Plane();
+    var pNormal = new THREE.Vector3(0, 0, 1); 
+    var shift = new THREE.Vector3(); // distance between position of an object and points of intersection with the object
+    var planeIntersect = new THREE.Vector3(); // point of intersection with the plane
 
     function onHover(event) {
+        event.preventDefault();
         // Calculate mouse position in normalized device coordinates
-        v2.x = ((event.clientX / window.innerWidth) -0.5)* 2;
-        v2.y = - ((event.clientY / window.innerHeight) -0.5 ) * 2;
+        mouse.x = ((event.clientX / window.innerWidth) -0.5)* 2;
+        mouse.y = - ((event.clientY / window.innerHeight) -0.5 ) * 2;
+
+        // Make the sphere follow the mouse
+        var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
+        vector.unproject( camera );
+        var dir = vector.sub( camera.position ).normalize();
+        var distance = (sphere.position.z - camera.position.z ) / dir.z;
+        var pos = camera.position.clone().add( dir.multiplyScalar( distance )     );
+        sphere.position.copy(pos);
+
+        sphere.position.z = 0.5;
+
+        // Make the sphere follow the mouse
+        //sphere.position.set(event.clientX, event.clientY, 0);
 
         // Raycast from camera to intersect objects
-        raycaster.setFromCamera(v2, camera);
-        const intersects = raycaster.intersectObject(sphere);
-
-        sphere.position.x = v2.x ;
-        sphere.position.y = v2.y ;
-
-        // If there's an intersection with the sphere, change cursor
-
-        if (intersects.length > 0){
-            //container.classList.add('hover-pointer');
-            // let first = intersects[0];
-            // mouse.x = first.point.x;
-            // mouse.y = first.point.z;
-
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject([sphere]);
+        
+        if(intersects.length > 0) {
             
+            pIntersect.copy(intersects[0].point);
+            plane.setFromNormalAndCoplanarPoint(pNormal, pIntersect);
+            shift.subVectors(intersects[0].object.position, intersects[0].point)
+            isDragging = true;
+            var dragObject = intersects[0].object;
+            raycaster.ray.intersectPlane(plane, planeIntersect);
+            dragObject.position.addVectors(planeIntersect, shift);
+            //sphere.position.copy(point.setY(0));
         }
         
+
+    
     }
 
 
@@ -214,6 +253,10 @@ const startApp = () => {
 
         scene.add(testPlane);
         scene.add(balls);
+        scene.add(sphere);
+
+        console.log(balls);
+        console.log(sphere);
 
 
 
