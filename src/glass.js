@@ -55,7 +55,7 @@ const startApp = () => {
     
     //container.addEventListener('click', onClick);
     container.addEventListener('mousemove', onHover);
-    container.addEventListener('touchmove', onHover);
+    // container.addEventListener('touchmove', onHover);
     
     // TEXTURE ON PLANE
     
