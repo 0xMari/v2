@@ -32,7 +32,7 @@ const startApp = () => {
 
     let time = 0;
     const numBlobs = 15;
-    const numSphere = 1;
+    const numSphere = 3;
     const clock = new THREE.Clock();
 
     const scene = useScene();
@@ -44,10 +44,10 @@ const startApp = () => {
 
     const { width, height } = useRenderSize()
 
-    const sphere = createMetaBalls(5);
+    const sphere = createMetaBalls(2);
     sphere.position.set(0,0,2.2);
 
-    const balls = createMetaBalls(7);
+    const balls = createMetaBalls(7.5);
     balls.position.set(0,0,2.2);
 
     const raycaster = new THREE.Raycaster();
@@ -155,9 +155,9 @@ const startApp = () => {
 
         for ( let i = 0; i < numblobs; i ++ ) {
 
-            const ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.27 + 0.5;
+            const bally = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.17 + 0.55;
             //const ballz = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) ) ) * 0.77; // dip into the floor
-            const bally = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.27 + 0.5;
+            const ballx = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.4 + 0.5;
             const ballz= 0;
             
 
@@ -180,12 +180,12 @@ const startApp = () => {
 
         for ( let i = 0; i < numblobs; i ++ ) {
 
-            // const ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.27 + 0.5;
+            const ballx = Math.sin( i + 1.26 * time * ( 1.03 + 0.5 * Math.cos( 0.21 * i ) ) ) * 0.27 + 0.5;
             //const ballz = Math.abs( Math.cos( i + 1.12 * time * Math.cos( 1.22 + 0.1424 * i ) ) ) * 0.77; // dip into the floor
-            //const bally = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.27 + 0.5;
+            const bally = Math.sin( i + 1.32 * time * 0.1 * Math.abs( ( 0.92 + 0.53 * i ) ) ) * 0.27 + 0.5;
             const ballz= 0;
-            const ballx = 0.5;
-            const bally = 0.5;
+            //const ballx = 0.5;
+            //const bally = 0.5;
 
             object.addBall(ballx, bally, ballz, strength, subtract);
 
@@ -221,7 +221,7 @@ const startApp = () => {
         var pos = camera.position.clone().add( dir.multiplyScalar( distance )     );
         sphere.position.copy(pos);
 
-        sphere.position.z = 0.5;
+        sphere.position.z = -2;
 
         // Make the sphere follow the mouse
         //sphere.position.set(event.clientX, event.clientY, 0);
