@@ -54,7 +54,8 @@ const startApp = () => {
     const mouse = new THREE.Vector2();
     
     //container.addEventListener('click', onClick);
-    container.addEventListener('mousemove', onHover)
+    container.addEventListener('mousemove', onHover);
+    container.addEventListener('touchmove', onHover);
     
     // TEXTURE ON PLANE
     
