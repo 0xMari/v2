@@ -11,7 +11,6 @@ import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js';
 
 import { addPass, useCamera, useGui, useRenderSize, useRenderer, useScene, useTick } from './init.js'
 
-import HelvetikerFont from "three/examples/fonts/helvetiker_regular.typeface.json";
 
 
 const startApp = () => {

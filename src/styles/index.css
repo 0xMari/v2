@@ -25,6 +25,12 @@ html,body, main{
     top: 0;
 }
 
+#contacts{
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
 
 
 h1{
@@ -74,8 +80,8 @@ section{
 }
 
 img{
-    width: 400px;
-    height: 80%;
+    width: 600px;
+    height: 60%;
     object-fit: cover;
     object-position: center;
 }
@@ -93,4 +99,20 @@ img{
         width: 300px;
         
     }
+}
+
+#endd{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+#endd > h1{
+    font-size: 15rem;
+}
+#endd > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
